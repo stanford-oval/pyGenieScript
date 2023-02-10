@@ -1,6 +1,8 @@
 import subprocess
 import requests
+import os
 
+current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Genie:
     def __init__(self,
@@ -8,10 +10,16 @@ class Genie:
                  thingpedia_dir : str,
                  log_file_name : str = 'log.log') -> None:
         # initialize genie server and retrieve the randomly assigned port number
-        self.command = 'genie contextual-genie --nlu-server {} --thingpedia-dir {} --log-file-name {}'.format(nlu_server_address, thingpedia_dir, log_file_name)
-        self.process = subprocess.Popen(self.command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        self.command = 'nvm use 18.12; node genie.js contextual-genie --nlu-server {} --thingpedia-dir {} --log-file-name {}'.format(nlu_server_address, thingpedia_dir, log_file_name)
+        self.process = subprocess.Popen(self.command,
+                                        stdout=subprocess.PIPE,
+                                        stdin=subprocess.PIPE,
+                                        stderr=subprocess.PIPE,
+                                        shell=True,
+                                        cwd=os.path.join(current_file_directory, "..", "..", "node_modules", "genie-toolkit", "dist", "tool"))
         while True:
             output = self.process.stdout.readline()
+            print(output)
             if output == '' and self.process.poll() is not None:
                 break
             if output and "Server port number at" in output.strip().decode():

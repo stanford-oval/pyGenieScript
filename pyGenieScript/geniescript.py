@@ -10,13 +10,16 @@ class Genie:
                  thingpedia_dir : str,
                  log_file_name : str = 'log.log') -> None:
         # initialize genie server and retrieve the randomly assigned port number
-        self.command = 'nvm use 18.12; node genie.js contextual-genie --nlu-server {} --thingpedia-dir {} --log-file-name {}'.format(nlu_server_address, thingpedia_dir, log_file_name)
+        self.command = '''export NVM_DIR="$HOME/.nvm"; \
+            [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"; \
+            [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"; '''
+        self.command += 'nvm use 18.12; node genie.js contextual-genie --nlu-server {} --thingpedia-dir {} --log-file-name {}'.format(nlu_server_address, thingpedia_dir, log_file_name)
         self.process = subprocess.Popen(self.command,
                                         stdout=subprocess.PIPE,
                                         stdin=subprocess.PIPE,
                                         stderr=subprocess.PIPE,
                                         shell=True,
-                                        cwd=os.path.join(current_file_directory, "..", "..", "node_modules", "genie-toolkit", "dist", "tool"))
+                                        cwd=os.path.join(current_file_directory, "..", "node_modules", "genie-toolkit", "dist", "tool"))
         while True:
             output = self.process.stdout.readline()
             print(output)

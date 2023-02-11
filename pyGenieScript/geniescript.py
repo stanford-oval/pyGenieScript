@@ -5,22 +5,25 @@ from huggingface_hub import snapshot_download
 from pathlib import Path
 import shutil
 from glob import glob
+import time
+import logging
 
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Genie:
     def __init__(self):
-        self.nvm_command = '''\. "/usr/local/opt/nvm/nvm.sh" '''
-        # TODO: install npm, nvm as well
+        logging.basicConfig()
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
         
         # install genie:
         if (not os.path.exists(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist"))):
             self.install_genie()
-        
+
         
     def initialize(self,
                     nlu_server_address : str,
-                    thingpedia_dir : str,
+                    thingpedia_dir : str = 'None',
                     log_file_name : str = 'log.log',
                     force_update_model = False,
                     force_update_manifest = False) -> None:
@@ -28,13 +31,12 @@ class Genie:
         actual_manifest = self.download_or_find_manifests(thingpedia_dir, force_update=force_update_manifest)
         
         # initialize genie server and retrieve the randomly assigned port number
-        command = 'nvm use 18.12; node genie.js contextual-genie --nlu-server {} --thingpedia-dir {} --log-file-name {}'.format(actual_server, actual_manifest, log_file_name)
-        print(command)
+        command = ['node', 'genie.js', 'contextual-genie',  '--nlu-server', actual_server, '--thingpedia-dir', actual_manifest,  '--log-file-name', log_file_name]
+        self.logger.info(command)
         process = subprocess.Popen(command,
                                         stdout=subprocess.PIPE,
                                         stdin=subprocess.PIPE,
                                         stderr=subprocess.PIPE,
-                                        shell=True,
                                         cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
         while True:
             output = process.stdout.readline()
@@ -57,8 +59,8 @@ class Genie:
         return r.json()
     
     def install_genie(self):
-        subprocess.call(["\. '/usr/local/opt/nvm/nvm.sh' ; nvm install 18.12"], cwd=current_file_directory, shell=True)
-        subprocess.call(["\. '/usr/local/opt/nvm/nvm.sh' ; nvm use 18.12 ; npm install genie-toolkit"], cwd=current_file_directory, shell=True)
+        self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
+        subprocess.call(["npm", "install", "genie-toolkit"], cwd=current_file_directory)
         
     def download_or_find_model(self, model_name : str, force_update = False):
         if "localhost" in model_name:
@@ -115,14 +117,18 @@ class Genie:
             actual_model_dir = "file://" + actual_model_dir
         actual_manifest_dir = self.download_or_find_manifests(manifest_dir, force_update=force_update_manifests)
             
-        command = self.nvm_command + '; nvm use 18.12; node genie.js server --nlu-model {} --thingpedia {}'.format(actual_model_dir, actual_manifest_dir)
-        print(command)
-        process = subprocess.Popen(command, shell=True, cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
+        command = ['node', 'genie.js', 'server', '--nlu-model', actual_model_dir, '--thingpedia', actual_manifest_dir]
+        self.logger.info(command)
+        self.logger.debug("the above command is running in {}".format(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool")))
+        process = subprocess.Popen(command, cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
         process.communicate()
             
 
 if __name__ == '__main__':
+    # TODO: structure these into useful unit tests
     genie = Genie()
+    
+    genie.nlu_server('yelp')
     
     genie.initialize("http://127.0.0.1:8400",
                   "/Users/shichengliu/Desktop/Monica_research/thingpedia-common-devices/geniescript",

@@ -69,7 +69,7 @@ class Genie:
         if "http" in model_name:
             return model_name
         
-        if (os.path.exists(model_name)):
+        if (os.path.exists(os.path.join(model_name, 'config.json'))):
             return model_name
         
         # in the future, we will have one model that accomplishes a lot of things

@@ -5,7 +5,7 @@ from setuptools.command.sdist import sdist as _sdist
 setup(
     name='pyGenieScript',
     author="Stanford University Open Virtual Assistant Lab",
-    version='0.0.0-a1',
+    version='0.0.0-a2',
     packages=find_packages(),
     package_data={'pyGenieScript': ['package.json']},
     include_package_data=True,

@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel", "npm"]
 
 [project]
 name = "pyGenieScript"
-version = "0.0.0a0"
+version = "0.0.0a3"
 authors = [
   { name="Shicheng Liu", email="shicheng@cs.stanford.edu" },
 ]

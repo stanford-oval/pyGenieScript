@@ -57,6 +57,10 @@ class Genie:
     def quit(self):
         r = requests.post(url = self.url + "quit")
         return r.json()
+
+    def clean(self):
+        r = requests.post(url = self.url + "clean")
+        return r.json()
     
     def install_genie(self):
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
@@ -130,9 +134,10 @@ if __name__ == '__main__':
     
     genie.nlu_server('yelp')
     
-    genie.initialize("http://127.0.0.1:8400",
-                  "/Users/shichengliu/Desktop/Monica_research/thingpedia-common-devices/geniescript",
-                  'log.log')
+    genie.initialize(
+        "http://127.0.0.1:8400",
+        "/Users/shichengliu/Desktop/Monica_research/thingpedia-common-devices/geniescript",
+        'log.log')
     print(genie.query('find me a restaurant'))
     print(genie.quit())
     

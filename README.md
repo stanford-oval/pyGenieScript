@@ -33,11 +33,13 @@ You can use GenieScript to query yelp database in natural language. We have prep
 
 *Tip: If you see `Prediction worker had an error: spawn genienlp ENOENT`, this means `genienlp` is not installed correctly.*
 
-If successful, the final message you see should be similar to this: `[I 230211 02:15:11 util:299] TransformerSeq2Seq has 139,420,416 parameters`
+If successful, the final message you see should be similar to this:
+
+```[I 230211 02:15:11 util:299] TransformerSeq2Seq has 139,420,416 parameters```
 
 Keep this REPL running, and in a separate terminal, run:
 
-2. The yelp skill requires you to [register an API online](https://fusion.yelp.com/) and obtain a developer key. Register an account here, retrieve the API key, and run:
+2. The yelp skill requires you to [register an API online](https://fusion.yelp.com/) and obtain a developer key. Register an account, retrieve the API key, and run:
 
 ```bash
 export YELP_API_KEY=[your key]

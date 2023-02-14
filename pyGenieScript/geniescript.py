@@ -48,6 +48,10 @@ class Genie:
     def quit(self):
         r = requests.post(url = self.url + "quit")
         return r.json()
+
+    def clean(self):
+        r = requests.post(url = self.url + "clean")
+        return r.json()
     
     def install_genie(self):
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
@@ -68,7 +72,7 @@ class Genie:
         if "http" in model_name:
             return model_name
         
-        if (os.path.exists(model_name)):
+        if (os.path.exists(os.path.join(model_name, 'config.json'))):
             return model_name
         
         # in the future, we will have one model that accomplishes a lot of things
@@ -161,9 +165,10 @@ if __name__ == '__main__':
     
     genie.nlu_server('yelp')
     
-    genie.initialize("http://127.0.0.1:8400",
-                  "/Users/shichengliu/Desktop/Monica_research/thingpedia-common-devices/geniescript",
-                  'log.log')
+    genie.initialize(
+        "http://127.0.0.1:8400",
+        "/Users/shichengliu/Desktop/Monica_research/thingpedia-common-devices/geniescript",
+        'log.log')
     print(genie.query('find me a restaurant'))
     print(genie.quit())
     

@@ -234,7 +234,7 @@ class Genie:
         (str): path to model
         """
         if "localhost" in model_name:
-            return self.retrieve_localhost()
+            return self.__retrieve_localhost()
         
         if "http" in model_name:
             return model_name
@@ -293,7 +293,7 @@ class Genie:
             
         return manifests_dest_dir
     
-    def retrieve_localhost(self):
+    def __retrieve_localhost(self):
         try:
             with open(os.path.join(current_file_directory, '_local_post_binding.txt'), "r") as fd:
                 port_number = fd.read().strip()

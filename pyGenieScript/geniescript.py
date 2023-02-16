@@ -92,7 +92,7 @@ class Genie:
             command,
             cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"),
             stdout=subprocess.PIPE)
-        port_number = self.retrieve_port_number(process)
+        port_number = self.__retrieve_port_number(process)
         self.url = "http://127.0.0.1:{}/".format(port_number)
         
     def nlu_server(self, model_dir : str,
@@ -305,3 +305,14 @@ class Genie:
     def __install_genie(self):
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
         subprocess.call(["npm", "install", "genie-toolkit"], cwd=current_file_directory)
+    
+    def __retrieve_port_number(self, process):
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            if output and "Server port number at" in output.strip().decode():
+                port_number = int(output.strip().decode().split(',')[-1].strip())
+                break
+            
+        return port_number

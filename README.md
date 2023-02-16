@@ -55,6 +55,11 @@ export YELP_API_KEY=[your key]
 >>> genie.quit() # Shuts down Genie server
 ```
 
+# Installation FAQ
+
+If you encounter a stall of `genie.query()` when running for the first time (see [here](https://github.com/stanford-oval/pyGenieScript/issues/4)), please
+cancel the stalled process and run again.
+
 # API documentation
 
 Main API documentations are aviliable [here](https://stanford-oval.github.io/pyGenieScript/pyGenieScript/geniescript.html).

@@ -54,3 +54,7 @@ export YELP_API_KEY=[your key]
 >>> genie.query("show me a chinese restaurant") # You should see meaningful results returned from Genie
 >>> genie.quit() # Shuts down Genie server
 ```
+
+# API documentation
+
+Main API documentations are aviliable [here](https://stanford-oval.github.io/pyGenieScript/pyGenieScript/geniescript.html).

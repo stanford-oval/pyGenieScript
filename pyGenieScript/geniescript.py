@@ -82,7 +82,11 @@ class Genie:
             
         `force_update_manifest` (bool, optional): force to update the manifest (if downloaded from git). Defaults to False.
         """
+        
         actual_server = self.download_or_find_model(nlu_server_address, force_update=force_update_model)
+        if (not actual_server.startswith('http:')):
+            actual_server = "file://" + actual_server
+        
         actual_manifest = self.download_or_find_manifests(thingpedia_dir, force_update=force_update_manifest)
         
         # initialize genie server and retrieve the randomly assigned port number
@@ -94,6 +98,7 @@ class Genie:
             stdout=subprocess.PIPE)
         port_number = self.__retrieve_port_number(process)
         self.url = "http://127.0.0.1:{}/".format(port_number)
+      
         
     def nlu_server(self, model_dir : str,
                    manifest_dir = "None",
@@ -138,6 +143,7 @@ class Genie:
         self.logger.debug("the above command is running in {}".format(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool")))
         process = subprocess.Popen(command, cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
         process.communicate()
+   
     
     def query(self, query : str):
         """
@@ -171,6 +177,7 @@ class Genie:
         res = r.json()
         return res
 
+
     def quit(self):
         """
         ### Description:
@@ -188,6 +195,7 @@ class Genie:
         """
         r = requests.post(url = self.url + "quit")
         return r.json()
+
 
     def clean(self):
         """
@@ -207,6 +215,7 @@ class Genie:
         """
         r = requests.post(url = self.url + "clean")
         return r.json()
+
         
     def download_or_find_model(self, model_name : str, force_update = False) -> str:
         """
@@ -257,7 +266,8 @@ class Genie:
             return model_dest_dir
 
         raise ValueError("model name currently not supported: " + model_name)
-        
+    
+    
     def download_or_find_manifests(self, manifest_name : str, force_update = False):
         """
         ### Description:
@@ -293,6 +303,7 @@ class Genie:
             
         return manifests_dest_dir
     
+    
     def __retrieve_localhost(self):
         try:
             with open(os.path.join(current_file_directory, '_local_post_binding.txt'), "r") as fd:
@@ -305,6 +316,7 @@ class Genie:
     def __install_genie(self):
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
         subprocess.call(["npm", "install", "genie-toolkit"], cwd=current_file_directory)
+    
     
     def __retrieve_port_number(self, process):
         while True:

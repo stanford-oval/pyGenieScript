@@ -3,5 +3,6 @@ node_modules/*
 *.egg-info/*
 dist/*
 *.pyc
-
 pyGenieScript/models/*
+*_local_post_binding.txt*
+.DS_Store

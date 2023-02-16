@@ -88,20 +88,12 @@ class Genie:
         # initialize genie server and retrieve the randomly assigned port number
         command = ['node', 'genie.js', 'contextual-genie',  '--nlu-server', actual_server, '--thingpedia-dir', actual_manifest,  '--log-file-name', log_file_name]
         self.logger.info(command)
-        process = subprocess.Popen(command,
-                                        stdout=subprocess.PIPE,
-                                        stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE,
-                                        cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
-        while True:
-            output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
-                break
-            if output and "Server port number at" in output.strip().decode():
-                # print(output.strip().decode())
-                self.port_number = int(output.strip().decode().split(',')[-1].strip())
-                break
-        self.url = "http://127.0.0.1:{}/".format(self.port_number)
+        process = subprocess.Popen(
+            command,
+            cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"),
+            stdout=subprocess.PIPE)
+        port_number = self.retrieve_port_number(process)
+        self.url = "http://127.0.0.1:{}/".format(port_number)
         
     def nlu_server(self, model_dir : str,
                    manifest_dir = "None",
@@ -242,7 +234,7 @@ class Genie:
         (str): path to model
         """
         if "localhost" in model_name:
-            return "http://127.0.0.1:8400"
+            return self.retrieve_localhost()
         
         if "http" in model_name:
             return model_name
@@ -300,6 +292,15 @@ class Genie:
             subprocess.call(["make geniescript_install_2"], cwd=os.path.join(current_file_directory, "thingpedia-common-devices"), shell=True)
             
         return manifests_dest_dir
+    
+    def retrieve_localhost(self):
+        try:
+            with open(os.path.join(current_file_directory, '_local_post_binding.txt'), "r") as fd:
+                port_number = fd.read().strip()
+            return "http://127.0.0.1:{}".format(port_number)
+        except Exception:
+            return "http://127.0.0.1:8400"
+            
         
     def __install_genie(self):
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))

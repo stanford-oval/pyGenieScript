@@ -23,18 +23,19 @@ def test_setup():
     assert(len(response['results']) >= 1)
     genie.quit()
 
+def instantiate_server():
+    import pyGenieScript.geniescript
+    genie = pyGenieScript.geniescript.Genie()
+    genie.nlu_server('yelp')
+
 def test_server():
-    import threading
+    import multiprocessing
     
-    def instantiate_server():
-        import pyGenieScript.geniescript
-        genie = pyGenieScript.geniescript.Genie()
-        genie.nlu_server('yelp')
-    
-    server_thread = threading.Thread(target=instantiate_server, name="localhost")
-    server_thread.start()
+    proc = multiprocessing.Process(target=instantiate_server, args=())
+    proc.start()    
     genie = pyGenieScript.geniescript.Genie()
     genie.initialize('yelp', 'yelp')
     response = genie.query("show me a chinese restaurant")
     assert(len(response['results']) >= 1)
     genie.quit()
+    proc.terminate() 

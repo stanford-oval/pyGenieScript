@@ -138,10 +138,22 @@ class Genie:
             actual_model_dir = "file://" + actual_model_dir
         actual_manifest_dir = self.download_or_find_manifests(manifest_dir, force_update=force_update_manifests)
             
-        command = ['node', 'genie.js', 'server', '--nlu-model', actual_model_dir, '--thingpedia', actual_manifest_dir]
+        command = ['node', 'genie.js', 'server', '--nlu-model', actual_model_dir, '--thingpedia', actual_manifest_dir, '--random-port']
         self.logger.info(command)
         self.logger.debug("the above command is running in {}".format(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool")))
-        process = subprocess.Popen(command, cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"))
+        process = subprocess.Popen(
+            command,
+            cwd=os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist", "tool"),
+            stdout=subprocess.PIPE)
+        
+        # retrieve random port returned by genie server
+        port_number = self.__retrieve_port_number(process)
+        with open(os.path.join(current_file_directory, '_local_post_binding.txt'), 'w') as fd:
+            fd.write(str(port_number))
+        
+        # prints the rest of the stdout after port has been retrieved
+        self.__print_process(process)
+        
         process.communicate()
    
     
@@ -328,3 +340,11 @@ class Genie:
                 break
             
         return port_number
+    
+    def __print_process(self, process):
+        def subprocess_yield(process):            
+            for stdout_line in iter(process.stdout.readline, ""):
+                yield stdout_line 
+        
+        for msg in subprocess_yield(process):
+            print(msg)

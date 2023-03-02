@@ -179,8 +179,8 @@ class Genie:
         
         ```
         {
-            'response': agent response from Genie (str),
-            'results': results from Genie, if any (list).
+            'response': agent response from Genie ([str]),
+            'results': results from Genie, if any ([JSON]).
         }
         ```
         """

@@ -12,10 +12,14 @@ The goal of this package is to:
 1. Install [node](https://nodejs.org/en/download/) in your current environment.
    
     - GenieScript recommends `node >= 18`, although it is yet to be tested on earlier nodes. If you have multiple nodes in your environment, we recommend using [nvm](https://github.com/nvm-sh/nvm). After installing it, run (1) `nvm install 18`, (2) `nvm use 18`, and finally (3) `nvm alias default 18`.
-  
-2. `pip install pyGenieScript`
 
-3. `pip install genienlp==0.7.0a4` (because installation of `genienlp` depends on more libraries, it is not included as a mandatory dependency of `pyGenieScript`)
+2. Install some required system dependency of `pyGenieScript`, including:
+
+    - install [gettext](https://www.gnu.org/software/gettext/). Install by [brew on Mac](https://formulae.brew.sh/formula/gettext) and by other package managers on linux.
+
+3. `pip install pyGenieScript`
+
+4. `pip install genienlp==0.7.0a4` (because installation of `genienlp` depends on more libraries, it is not included as a mandatory dependency of `pyGenieScript`)
 
 # Usage
 

@@ -19,7 +19,7 @@ The goal of this package is to:
 
 3. `pip install pyGenieScript`
 
-4. `pip install genienlp==0.7.0a4` (because installation of `genienlp` depends on more libraries, it is not included as a mandatory dependency of `pyGenieScript`)
+4. `pip install genienlp==0.7.0a4` (because installation of `genienlp` depends on more libraries, it is not included as a mandatory dependency of `pyGenieScript`). **For Mac M1/M2 users, refer to this [installation guide](https://github.com/stanford-oval/pyGenieScript/blob/master/genienlp-apple-silicone.md).**
 
 # Usage
 

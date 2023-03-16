@@ -32,10 +32,10 @@ def test_server():
     import multiprocessing
     
     proc = multiprocessing.Process(target=instantiate_server, args=())
-    proc.start()    
+    proc.start()
     genie = pyGenieScript.geniescript.Genie()
     genie.initialize('yelp', 'yelp')
     response = genie.query("show me a chinese restaurant")
     assert(len(response['results']) >= 1)
     genie.quit()
-    proc.terminate() 
+    proc.terminate()

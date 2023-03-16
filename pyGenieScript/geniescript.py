@@ -36,25 +36,40 @@ import shutil
 from glob import glob
 import time
 import logging
+import json
 
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Genie:
     """A Genie instance."""
-    def __init__(self):
+    def __init__(self, check_genie_version = True):
         """
         Install `genie-toolkit` and prepare it for initialization.
         
-        If no `genie-toolkit` has been downloaded, the latest `wip/geniescript`
-        branch of `genie-toolkit` from github will be downloaded and installed.
+        Automatically check if specified `genie-toolkit` version has been installed,
+        if not, install the specified version (which can be found in `pyGenieScript/package.json`).
+        
+        Unless `check_genie_version` is False, always check if installed version matches with specified version
+        
+        ### Args:
+        
+        `check_genie_version` (bool, optional): where to check currently installed genie version and re-install if necessary. Default to True.
         """
         logging.basicConfig()
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
         
+        self.genie_dir = os.path.exists(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist"))
+        
         # install genie:
-        if (not os.path.exists(os.path.join(current_file_directory, "node_modules", "genie-toolkit", "dist"))):
+        if (not self.genie_dir):
             self.__install_genie()
+            
+        # check version, if necessary, and re-install
+        if (check_genie_version and self.__if_outdated_genie()):
+            self.__install_genie()
+            
+        self.num_results = 1
 
         
     def initialize(self,
@@ -157,11 +172,11 @@ class Genie:
         process.communicate()
    
     
-    def query(self, query : str):
+    def query(self, query : str, num_results = 1):
         """
         ### Description:
         
-        Query Genie for response.
+        Query Genie for response for an optional number of responses.
         
         Return a JSON object.
         
@@ -172,7 +187,9 @@ class Genie:
 
         ### Args:
         
-        `query` (str): query in natural language
+        `query` (str): query in natural language.
+        
+        `num_results` (int, optional): number of results Genie should return. In practice, choose between 1, 2, 3, or 10. Defaults to 1.
 
         ### Returns:
         
@@ -184,6 +201,18 @@ class Genie:
         }
         ```
         """
+        
+        # only need to POST num_results to Genie if it differs from current one
+        if (num_results != self.num_results):
+            self.num_results = num_results
+            r = requests.post(url = self.url + "setNumResults", json = {
+                "numResults": "{}".format(num_results)
+            })
+            res = r.json()
+            if "response" not in res or res["response"] != 200:
+                msg = "Setting numResults = {} failed".format(num_results)
+                self.logger.warning(msg)
+        
         params = {'q': query}
         r = requests.get(url = self.url + "query", params = params)
         res = r.json()
@@ -329,6 +358,33 @@ class Genie:
         self.logger.info("installing genie-toolkit at {}".format(current_file_directory))
         subprocess.call(["npm", "install", "genie-toolkit"], cwd=current_file_directory)
     
+    # whether the installed version of genie is outdated
+    def __if_outdated_genie(self):
+        if (not self.genie_dir):
+            return False
+        
+        # get desired genie version associated with this version of pyGenieScript
+        with open(os.path.join(current_file_directory, "package.json"), 'r') as fd:
+            genie_desired_ver : str = json.loads(fd.read())['dependencies']['genie-toolkit']
+        genie_desired_ver_hash = genie_desired_ver.split("#")[-1]
+        
+        try:
+            res = subprocess.check_output(['npm', 'ls', '--json'], cwd=current_file_directory)
+            genie_installed_ver : str = json.loads(res)['dependencies']['genie-toolkit']['resolved']
+            genie_installed_ver_hash = genie_installed_ver.split("#")[-1]
+            
+            if genie_desired_ver_hash == genie_installed_ver_hash:
+                return False
+        except Exception as e:
+            self.logger.info("__if_outdated_genie produced error {}".format(e))
+        
+        if 'genie_installed_ver_hash' in locals():
+            print("Installed genie-toolkit version: {}".format(genie_installed_ver_hash))
+        else:
+            print("Installed genie-toolkit version: N/A")
+        
+        print("Specified genie-toolkit version: {}\nwill reinstall genie-toolkit".format(genie_desired_ver_hash))
+        return True
     
     def __retrieve_port_number(self, process):
         while True:

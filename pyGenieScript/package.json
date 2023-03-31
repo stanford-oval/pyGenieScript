@@ -2,6 +2,6 @@
     "name": "pyGenieScript",
     "version": "0.0.0",
     "dependencies": {
-        "genie-toolkit": "github:stanford-oval/genie-toolkit#2526a1c12f4fb0aee10be47cbd1d9f0b3495d898"
+        "genie-toolkit": "github:stanford-oval/genie-toolkit#8e471ae4e11d1ad54e1fc9dc9e582eed71888277"
     }
 }

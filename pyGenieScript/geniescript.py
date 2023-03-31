@@ -172,7 +172,7 @@ class Genie:
         process.communicate()
    
     
-    def query(self, query : str, num_results = 1):
+    def query(self, query : str, num_results = 1, dialog_state = None):
         """
         ### Description:
         
@@ -184,20 +184,26 @@ class Genie:
         
         Note, it is possible for `results` to be an empty list, in case if there is no new result, e.g.,
         during slot-filling or when there is an error.
+        
+        *Applies to v0.0.0b3*: there is a TBD bug in the first invocation of `query` with `dialog_state`.
+        To bypass this bug for now, call `query` without `dialog_state` first before calling it with `dialog_state`.
 
         ### Args:
         
         `query` (str): query in natural language.
         
         `num_results` (int, optional): number of results Genie should return. In practice, choose between 1, 2, 3, or 10. Defaults to 1.
+        
+        `dialog_state` (str, optional): dialog state to be put to Genie as context. Defaults to None (use current dialog state in context).
 
         ### Returns:
-        
         
         ```
         {
             'response': agent response from Genie ([str]),
-            'results': results from Genie, if any ([JSON]).
+            'results': results from Genie, if any ([JSON]),
+            'user_target': ThingTalk for `query` determined by semantic parser (str),
+            'ds': dialog state (in ThingTalk) after executing `user_target` (str).
         }
         ```
         """
@@ -213,9 +219,15 @@ class Genie:
                 msg = "Setting numResults = {} failed".format(num_results)
                 self.logger.warning(msg)
         
-        params = {'q': query}
-        r = requests.get(url = self.url + "query", params = params)
-        res = r.json()
+        if (dialog_state is None):
+            params = {'q': query}
+            r = requests.get(url = self.url + "query", params = params)
+            res = r.json()
+        else:
+            params = {'q': query, 'ds': dialog_state}
+            r = requests.post(url = self.url + "queryContext", json = params)
+            res = r.json()
+            
         return res
 
 

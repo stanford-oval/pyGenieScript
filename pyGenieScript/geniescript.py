@@ -172,7 +172,13 @@ class Genie:
         process.communicate()
    
     
-    def query(self, query : str, num_results = 1, dialog_state = None):
+    def query(
+        self,
+        query : str,
+        num_results = 1,
+        dialog_state = None,
+        aux = []
+    ):
         """
         ### Description:
         
@@ -224,7 +230,7 @@ class Genie:
             r = requests.get(url = self.url + "query", params = params)
             res = r.json()
         else:
-            params = {'q': query, 'ds': dialog_state}
+            params = {'q': query, 'ds': dialog_state, "aux": aux}
             r = requests.post(url = self.url + "queryContext", json = params)
             res = r.json()
             
@@ -388,7 +394,7 @@ class Genie:
             if genie_desired_ver_hash == genie_installed_ver_hash:
                 return False
         except Exception as e:
-            self.logger.info("__if_outdated_genie produced error {}".format(e))
+            self.logger.debug("__if_outdated_genie produced error {}".format(e))
         
         if 'genie_installed_ver_hash' in locals():
             print("Installed genie-toolkit version: {}".format(genie_installed_ver_hash))
@@ -396,6 +402,7 @@ class Genie:
             print("Installed genie-toolkit version: N/A")
         
         print("Specified genie-toolkit version: {}\nwill reinstall genie-toolkit".format(genie_desired_ver_hash))
+        print("You can disregard any npm errors above as long as the new installation is succesful")
         return True
     
     def __retrieve_port_number(self, process):

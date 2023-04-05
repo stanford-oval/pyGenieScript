@@ -2,7 +2,7 @@
     "name": "pyGenieScript",
     "version": "0.0.0",
     "dependencies": {
-        "genie-toolkit": "github:stanford-oval/genie-toolkit#069f99e584106dcb097318b9f7b5cf73272176b4",
-        "thingtalk": "github:stanford-oval/thingtalk.git#54c9c4aef83eaf963582278c29988570e6d1042a"
+        "genie-toolkit": "github:stanford-oval/genie-toolkit#ff3e8d6e93c2694771d3a7767f420599153c847c",
+        "thingtalk": "github:stanford-oval/thingtalk.git#65d8397b6f12145ee4d0b21b97ad96bf450f5b04"
     }
 }

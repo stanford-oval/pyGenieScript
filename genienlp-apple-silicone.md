@@ -21,3 +21,7 @@ Instead, we recommend using rosetta for now.
 - I have successfully installed `genienlp` but see `ImportError: cannot import name 'NonNegativeFloat' from 'pydantic'` when running `genienlp`. 
 
 > This is due to an issue with `pydantic` version. You can run `pip3.7 install pydantic==1.8.2` to solve this problem.
+
+- I have installed brew in `/usr/local/bin/brew` but `which brew` still shows up in the old location `/opt/homebrew/bin/brew`
+
+> Editing your shell profile file (e.g. .bash_profile, .bashrc, .zshrc, etc.) adding the following line to it: `export PATH="/usr/local/bin:$PATH"`. Then run `source ~/.bash_profile` (or your equivalent shell profile file) to update the terminal. 

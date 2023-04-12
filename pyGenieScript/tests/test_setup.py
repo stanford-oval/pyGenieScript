@@ -12,7 +12,7 @@ def test_genienlp():
         subprocess.check_call([sys.executable, "-m", "pip", "install", 'genienlp==0.7.0a4'])
     
     if (not shutil.which('genienlp')):
-        # genienlp is not succesfully installed
+        # genienlp is not successfully installed
         raise ValueError("genienlp is not correctly installed")
     assert(True)
 

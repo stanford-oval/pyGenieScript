@@ -402,7 +402,7 @@ class Genie:
             print("Installed genie-toolkit version: N/A")
         
         print("Specified genie-toolkit version: {}\nwill reinstall genie-toolkit".format(genie_desired_ver_hash))
-        print("You can disregard any npm errors above as long as the new installation is succesful")
+        print("You can disregard any npm errors above as long as the new installation is successful")
         return True
     
     def __retrieve_port_number(self, process):

@@ -6,3 +6,4 @@ dist/*
 pyGenieScript/models/*
 *_local_post_binding.txt*
 .DS_Store
+package-lock.json

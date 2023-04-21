@@ -208,8 +208,11 @@ class Genie:
         {
             'response': agent response from Genie ([str]),
             'results': results from Genie, if any ([JSON]),
-            'user_target': ThingTalk for `query` determined by semantic parser (str),
-            'ds': dialog state (in ThingTalk) after executing `user_target` (str).
+            'user_target': ThingTalk for `query` determined by semantic parser, empty string if error (str),
+            'ds': dialog state (in ThingTalk) after executing `user_target` (str),
+            'aux': auxciliary info for `ds` (str),
+            'delta_verbal': verbalization of sentence state, empty list if error ([str]),
+            'full_verbal': verbalization of full state, empty list if error ([str]).
         }
         ```
         """

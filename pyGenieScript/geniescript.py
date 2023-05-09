@@ -70,6 +70,7 @@ class Genie:
             self.__install_genie()
             
         self.num_results = 1
+        self.neglect_filters = []
 
         
     def initialize(self,
@@ -176,7 +177,9 @@ class Genie:
         self,
         query : str,
         num_results = 1,
+        neglect_filters = [],
         dialog_state = None,
+        use_existing_ds = False,
         aux = []
     ):
         """
@@ -228,12 +231,27 @@ class Genie:
                 msg = "Setting numResults = {} failed".format(num_results)
                 self.logger.warning(msg)
         
-        if (dialog_state is None):
+        if (neglect_filters != self.neglect_filters):
+            self.neglect_filters = neglect_filters
+            for i in neglect_filters:
+                r = requests.post(url = self.url + "neglectFilters", json= {
+                    "name": i
+                })
+                res = r.json()
+                if "response" not in res or res["response"] != 200:
+                    msg = "Setting neglectFilters = {} failed".format(neglect_filters)
+                    self.logger.warning(msg)
+        
+        if (use_existing_ds):
             params = {'q': query}
             r = requests.get(url = self.url + "query", params = params)
             res = r.json()
         else:
-            params = {'q': query, 'ds': dialog_state, "aux": aux}
+            if dialog_state is None:
+                params = {'q': query, "aux": aux}
+            else:
+                params = {'q': query, 'ds': dialog_state, "aux": aux}
+            
             r = requests.post(url = self.url + "queryContext", json = params)
             res = r.json()
             

@@ -71,6 +71,7 @@ class Genie:
             
         self.num_results = 1
         self.neglect_filters = []
+        self.neglect_projections = []
 
         
     def initialize(self,
@@ -178,6 +179,7 @@ class Genie:
         query : str,
         num_results = 1,
         neglect_filters = [],
+        neglect_projections = [],
         dialog_state = None,
         use_existing_ds = False,
         aux = []
@@ -240,6 +242,17 @@ class Genie:
                 res = r.json()
                 if "response" not in res or res["response"] != 200:
                     msg = "Setting neglectFilters = {} failed".format(neglect_filters)
+                    self.logger.warning(msg)
+        
+        if (neglect_projections != self.neglect_projections):
+            self.neglect_projections = neglect_projections
+            for i in neglect_projections:
+                r = requests.post(url = self.url + "neglectProjections", json= {
+                    "name": i
+                })
+                res = r.json()
+                if "response" not in res or res["response"] != 200:
+                    msg = "Setting neglectProjections = {} failed".format(neglect_projections)
                     self.logger.warning(msg)
         
         if (use_existing_ds):

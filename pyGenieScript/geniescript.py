@@ -72,6 +72,7 @@ class Genie:
         self.num_results = 1
         self.neglect_filters = []
         self.neglect_projections = []
+        self.use_direct_sentence_state = False
 
         
     def initialize(self,
@@ -182,7 +183,8 @@ class Genie:
         neglect_projections = [],
         dialog_state = None,
         use_existing_ds = False,
-        aux = []
+        aux = [],
+        use_direct_sentence_state = False
     ):
         """
         ### Description:
@@ -254,6 +256,16 @@ class Genie:
                 if "response" not in res or res["response"] != 200:
                     msg = "Setting neglectProjections = {} failed".format(neglect_projections)
                     self.logger.warning(msg)
+        
+        if (use_direct_sentence_state != self.use_direct_sentence_state):
+            self.use_direct_sentence_state = use_direct_sentence_state
+            r = requests.post(url = self.url + "toggleDirectSentenceState", json= {
+                    "directSentenceState": use_direct_sentence_state
+            })
+            res = r.json()
+            if "response" not in res or res["response"] != 200:
+                msg = "Setting use_direct_sentence_state = {} failed".format(use_direct_sentence_state)
+                self.logger.warning(msg)
         
         if (use_existing_ds):
             params = {'q': query}

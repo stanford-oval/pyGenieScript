@@ -66,4 +66,4 @@ cancel the stalled process and run again.
 
 # API documentation
 
-Main API documentations are aviliable [here](https://stanford-oval.github.io/pyGenieScript/pyGenieScript/geniescript.html).
+Main API documentations are available [here](https://stanford-oval.github.io/pyGenieScript/pyGenieScript/geniescript.html).
